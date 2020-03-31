@@ -1,0 +1,174 @@
+<div class="container">
+  <h1 class="text-center">CRUD</h1>
+  <input type="file" style="display: inline-block;" (change)="incomingfile($event)" placeholder="Upload file"
+    accept=".xlsx">
+  <button type="button" class="btn btn-info" (click)="Upload()">Subir</button>
+  &nbsp;&nbsp;
+  <a href="#" (click)="openo(contento)">?</a>
+  <br />
+  <!-- <button class="btn btn-primary">Agregar nuevo usuario</button> -->
+  <button class="btn btn-lg btn-primary float-right" (click)="open_formulario_usuario(content,'nuevo')">+ Agregar nuevo
+    usuario</button>
+  <br />
+  <br />
+  <br />
+  <div class="form-group">
+    <div class="row">
+      <div class="col-6"></div>
+      <div class="col-6">
+        <div class="row">
+          <div class="col-6">
+            <label class="float-right" for="input_buscador">Buscar por nombre o apellido:</label>
+          </div>
+          <div class="col-6">
+            <input type="text" class="form-control" id="input_buscador" (keyup)='buscar($event.target.value)'>
+          </div>
+        </div>
+      </div>
+
+        <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+      </div>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Img</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Apellido</th>
+        <th scope="col">Telefono</th>
+        <th scope="col">Edad</th>
+        <th scope="col">FechaIngreso</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody *ngIf="filterData.length==0; else tabla_resultados">
+      <tr *ngFor="let usuario of usuarios_list">
+        <td>{{ usuario.int_id_usuario }}</td>
+        <td><img src="{{'data:image/png;base64,' + usuario.vchar_foto}}" style="max-width: 80px; max-height:auto;" />
+        </td>
+        <td>{{ usuario.vchar_nombre }}</td>
+        <td>{{ usuario.vchar_apellido }}</td>
+        <td>{{ usuario.vchar_telefono }}</td>
+        <td>{{ usuario.int_edad }}</td>
+        <td>{{ usuario.date_fecha_ingreso }}</td>
+        <td><button class="btn btn-info"
+            (click)="open_formulario_usuario(content,usuario.int_id_usuario)">Editar</button> &nbsp;
+          <button class="btn btn-danger" (click)="delete_usuario(usuario.int_id_usuario)">Eliminar</button></td>
+      </tr>
+    </tbody>
+    <ng-template #tabla_resultados>
+      <tbody>
+        <tr *ngFor="let usuario of filterData">
+          <td>{{ usuario.int_id_usuario }}</td>
+          <td><img src="{{'data:image/png;base64,' + usuario.vchar_foto}}" style="max-width: 80px; max-height:auto;" />
+          </td>
+          <td>{{ usuario.vchar_nombre }}</td>
+          <td>{{ usuario.vchar_apellido }}</td>
+          <td>{{ usuario.vchar_telefono }}</td>
+          <td>{{ usuario.int_edad }}</td>
+          <td>{{ usuario.date_fecha_ingreso }}</td>
+          <td><button class="btn btn-info"
+              (click)="open_formulario_usuario(content,usuario.int_id_usuario)">Editar</button> &nbsp;
+            <button class="btn btn-danger" (click)="delete_usuario(usuario.int_id_usuario)">Eliminar</button></td>
+        </tr>
+      </tbody>
+    </ng-template>
+    
+  </table>
+
+
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{titulo_modal}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- in app.component.html -->
+      <div class="row">
+        <div class="col-4">
+          <ngx-dropzone *ngIf="nueva_imagen==true else etiqueta_imagen" (change)="onSelect($event)" [multiple]="false">
+            <ngx-dropzone-label>Arrastra tu imagen o haz click en esta área</ngx-dropzone-label>
+            <ngx-dropzone-image-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)"
+              ngProjectAs="ngx-dropzone-preview" [file]="f">
+              <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+            </ngx-dropzone-image-preview>
+          </ngx-dropzone>
+          <ng-template #etiqueta_imagen>
+            <img src="{{'data:image/png;base64,' + nuevo_usuario.vchar_foto}}"
+              style="max-width: 80px; max-height:auto;" />
+            <br>
+            <button (click)="mostrar_input_imagen()">Cambiar imagen</button>
+          </ng-template>
+
+        </div>
+        <div class="col-8">
+          <div class="form-group">
+            <div class="row">
+              <div class="col-6">
+                <label for="input_nombre">Nombre</label>
+                <input type="text" class="form-control" id="input_nombre" placeholder="ej: Braulio Cesar"
+                  [(ngModel)]="nuevo_usuario.vchar_nombre">
+                <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+              </div>
+              <div class="col-6">
+                <label for="input_apellidos">Apellido(s)</label>
+                <input type="text" class="form-control" id="input_apellidos" placeholder="ej: Lopez Lopez"
+                  [(ngModel)]="nuevo_usuario.vchar_apellido">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="row">
+              <div class="col-4">
+                <label for="input_telefono">Telefono</label>
+                <input type="text" maxlength="10" class="form-control" id="input_telefono" placeholder="ej: 3312345678"
+                  [(ngModel)]="nuevo_usuario.vchar_telefono" (keypress)="validate(event)">
+              </div>
+              <div class="col-2">
+                <label for="input_edad">Edad</label>
+                <input type="text" maxlength="3" class="form-control" id="input_edad" placeholder=""
+                  [(ngModel)]="nuevo_usuario.int_edad" (keypress)="validate(event)">
+              </div>
+              <div class="col-6">
+                <label for="input_fecha_ingreso">Fecha de Ingreso</label>
+                <input type="date" class="form-control" id="input_fecha_ingreso" placeholder="ej: 24/10/20"
+                  [(ngModel)]="nuevo_usuario.date_fecha_ingreso">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+    <div class="modal-footer">
+      <!-- <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button> -->
+      <button type="submit" class="btn btn-danger" (click)="guardar_usuario(comando_onclick)">Guardar</button>
+    </div>
+  </ng-template>
+
+  <ng-template #contento let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Como hacer carga masiva de usuarios</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Crea un archivo excel con estos campos y llenar su respectiva información</p>
+      <br>
+      <img src="../../assets/images/Screenshot_1.png"
+              style="max-width: auto; max-height:auto;" />
+    </div>
+    <div class="modal-footer">
+      <!-- <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button> -->
+    </div>
+  </ng-template>
+
+
+</div>
