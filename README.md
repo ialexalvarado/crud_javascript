@@ -18,7 +18,7 @@ npm install
 
 ## BD
 
-correr el script dbpersonal.sql en mysql para crear la base de datos
+correr el script dbpersonal.sql en mysql para crear la base de datos, tabla y registros
 
 ## Cambiar conexión
 
