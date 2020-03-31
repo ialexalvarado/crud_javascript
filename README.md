@@ -20,7 +20,7 @@ npm install
 
 correr el script dbpersonal.sql en mysql para crear la base de datos, tabla y registros
 
-## Cambiar conexión
+## Cambiar conexión de bd
 
 en el archivo ubicado en 'ws crud\server\conf\conf.js' modificar las conexiones del server, usuario y contraseña para poder interactuar con la bd y la aplicación
 
@@ -42,3 +42,5 @@ o
 ```bash
 nodemon app.js
 ````
+
+Fin del readme :)
